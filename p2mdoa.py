@@ -13,16 +13,16 @@ class P2MDoA():
     """
     # project.type.tx_y.rz.p2m
     _filename_match_re = (r'^(?P<project>.*)' +
-                          '\.' + 
-                          'doa' + 
-                          '\.' + 
-                          't(?P<transmitter>\d+)'+
-                          '_' +
-                          '(?P<transmitter_set>\d+)' +
-                          '\.' + 
-                          'r(?P<receiver_set>\d+)' + 
-                          '\.' +
-                          'p2m$')
+                          r'\.' + 
+                          r'doa' + 
+                          r'\.' + 
+                          r't(?P<transmitter>\d+)'+
+                          r'_' +
+                          r'(?P<transmitter_set>\d+)' +
+                          r'\.' + 
+                          r'r(?P<receiver_set>\d+)' + 
+                          r'\.' +
+                          r'p2m$')
     
     def __init__(self, filename):
         self.filename = filename
@@ -103,7 +103,7 @@ class P2MDoA():
                 return next_line
 
 if __name__=='__main__':
-    doa = P2MDoA('iter0.doa.t001_05.r006.p2m')
+    doa = P2MDoA('example/iter0.doa.t001_05.r006.p2m')
     print('project: ', doa.project)
     print('transmitter set: ', doa.transmitter_set)
     print('transmitter: ', doa.transmitter)
