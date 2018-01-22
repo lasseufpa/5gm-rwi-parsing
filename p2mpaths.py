@@ -25,9 +25,7 @@ class P2MDoA():
                           'p2m$')
     
     def __init__(self, filename):
-        print ("ahhh 1")
         self.filename = filename
-        print ("ahhh 2")
         self.file = None
         self._parse()
         
@@ -137,9 +135,12 @@ class P2MPaths(P2MDoA):
          spread_delay -self.data[receiver][2]-'''
         line = self._get_next_line()
         self.data[receiver] = collections.OrderedDict()
-        self.data[receiver] = [float(i) for i in line.split()]
+        received_power, arrival_time, spread_delay = [float(i) for i in line.split()]
+        self.data[receiver]['received_power'] = received_power
+        self.data[receiver]['arrival_time'] = arrival_time
+        self.data[receiver]['spread_delay'] = spread_delay
         print (self.data) #debug
-        print (self.data[receiver][1]) #debug
+        print (self.data[receiver]) #debug
         #for rec in range(self.n_receivers):
         '''Read: srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2
             GETTING ERROR --- TO FIX'''
@@ -148,19 +149,20 @@ class P2MPaths(P2MDoA):
         interactions_list = self._get_next_line().strip()
         print (interactions_list) #debug
         ray_n = int(ray_n)
-        ray = int(3)
         n_interactions = int(n_interactions)
-        self.data[receiver][ray][ray_n] = collections.OrderedDict()
-        self.data[receiver][ray][ray_n] = srcvdpower
-        self.data[receiver][ray][ray_n] = arrival_time
-        self.data[receiver][ray][ray_n] = arrival_angle1
-        self.data[receiver][ray][ray_n] = arrival_angle2
-        self.data[receiver][ray][ray_n] = departure_angle1
-        self.data[receiver][ray][ray_n] = departure_angle2
-        self.data[receiver][ray][ray_n] = interactions_list
+        self.data[receiver][ray_n] = collections.OrderedDict()
+        self.data[receiver][ray_n]['srcvdpower'] = srcvdpower
+        self.data[receiver][ray_n]['arrival_time'] = arrival_time
+        self.data[receiver][ray_n]['arrival_angle1'] = arrival_angle1
+        self.data[receiver][ray_n]['arrival_angle2'] = arrival_angle2
+        self.data[receiver][ray_n]['departure_angle1'] = departure_angle1
+        self.data[receiver][ray_n]['departure_angle2'] = departure_angle2
+        self.data[receiver][ray_n]['interactions_list'] = interactions_list
+        self.data[receiver][ray_n]['interactions'] = collections.OrderedDict()
         
         #print (self.data)
-        print(self.data[receiver][ray])
+        print(self.data[receiver])
+        print(interactions_list.split('-')[0])
         #print(self.data[receiver][ray][interactions_list])
         '''Get coordenates of interactions'''
         for i in range(n_interactions+2):
@@ -170,8 +172,9 @@ class P2MPaths(P2MDoA):
             interaction = i 
             print (interaction)
             coordenates = np.array([float(j) for j in sp_line[0:]])
-            self.data[receiver][ray][interaction] = coordenates
-            print(self.data[receiver][ray][interaction][1])
+            self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordenates
+            print(self.data[receiver][ray_n]['interactions'])
+        print(self.data)
 
 
 
