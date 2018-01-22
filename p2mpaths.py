@@ -144,37 +144,38 @@ class P2MPaths(P2MDoA):
         #for rec in range(self.n_receivers):
         '''Read: srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2
             GETTING ERROR --- TO FIX'''
-        line = self._get_next_line()
-        ray_n, n_interactions, srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2 = [float(i) for i in line.split()]
-        interactions_list = self._get_next_line().strip()
-        print (interactions_list) #debug
-        ray_n = int(ray_n)
-        n_interactions = int(n_interactions)
-        self.data[receiver][ray_n] = collections.OrderedDict()
-        self.data[receiver][ray_n]['srcvdpower'] = srcvdpower
-        self.data[receiver][ray_n]['arrival_time'] = arrival_time
-        self.data[receiver][ray_n]['arrival_angle1'] = arrival_angle1
-        self.data[receiver][ray_n]['arrival_angle2'] = arrival_angle2
-        self.data[receiver][ray_n]['departure_angle1'] = departure_angle1
-        self.data[receiver][ray_n]['departure_angle2'] = departure_angle2
-        self.data[receiver][ray_n]['interactions_list'] = interactions_list
-        self.data[receiver][ray_n]['interactions'] = collections.OrderedDict()
-        
-        #print (self.data)
-        print(self.data[receiver])
-        print(interactions_list.split('-')[0])
-        #print(self.data[receiver][ray][interactions_list])
-        '''Get coordenates of interactions'''
-        for i in range(n_interactions+2):
+        for rays in xrange(0,25):
             line = self._get_next_line()
-            sp_line = line.split()
-            print (sp_line)
-            interaction = i 
-            print (interaction)
-            coordenates = np.array([float(j) for j in sp_line[0:]])
-            self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordenates
-            print(self.data[receiver][ray_n]['interactions'])
-        print(self.data)
+            ray_n, n_interactions, srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2 = [float(i) for i in line.split()]
+            interactions_list = self._get_next_line().strip()
+            print (interactions_list) #debug
+            ray_n = int(ray_n)
+            n_interactions = int(n_interactions)
+            self.data[receiver][ray_n] = collections.OrderedDict()
+            self.data[receiver][ray_n]['srcvdpower'] = srcvdpower
+            self.data[receiver][ray_n]['arrival_time'] = arrival_time
+            self.data[receiver][ray_n]['arrival_angle1'] = arrival_angle1
+            self.data[receiver][ray_n]['arrival_angle2'] = arrival_angle2
+            self.data[receiver][ray_n]['departure_angle1'] = departure_angle1
+            self.data[receiver][ray_n]['departure_angle2'] = departure_angle2
+            self.data[receiver][ray_n]['interactions_list'] = interactions_list
+            self.data[receiver][ray_n]['interactions'] = collections.OrderedDict()
+            
+            #print (self.data)
+            print(self.data[receiver])
+            print(interactions_list.split('-')[0])
+            #print(self.data[receiver][ray][interactions_list])
+            '''Get coordenates of interactions'''
+            for i in range(n_interactions+2):
+                line = self._get_next_line()
+                sp_line = line.split()
+                print (sp_line)
+                interaction = i 
+                print (interaction)
+                coordenates = np.array([float(j) for j in sp_line[0:]])
+                self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordenates
+                print(self.data[receiver][ray_n]['interactions'])
+            print(self.data)
 
 
 
