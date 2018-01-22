@@ -14,7 +14,7 @@ class P2MDoA():
     # project.type.tx_y.rz.p2m
     _filename_match_re = (r'^(?P<project>.*)' +
                           '\.' + 
-                          'paths' + 
+                          '(paths|doa)' + 
                           '\.' + 
                           't(?P<transmitter>\d+)'+
                           '_' +
