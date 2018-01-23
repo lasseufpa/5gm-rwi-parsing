@@ -173,7 +173,7 @@ class P2MPaths(P2MDoA):
         return data_ndarray
     def get_arrival_angle_ndarray(self, antenna_number):
 
-        ''' return the daparture angles as a ndarray
+        ''' return the arrival angles as a ndarray
         
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         '''
@@ -186,7 +186,7 @@ class P2MPaths(P2MDoA):
 
     def get_p_gain_ndarray(self, antenna_number):
 
-        ''' return the daparture angles as a ndarray
+        ''' return the gains as a ndarray
         
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         '''
@@ -208,6 +208,6 @@ if __name__=='__main__':
     #print('receiver set: ', doa.receiver_set)
     #print(doa.get_data_ndarray())
     #print(path.data[1])
-    print('Departure angeles: ',path.get_departure_angle_ndarray(1))
+    print('Departure angeles: ',path.get_departure_angle_ndarray(1)) 'Pass the antenna_number as argument'
     print('Arrival angeles: ',path.get_arrival_angle_ndarray(1))
     print('Gains: ',path.get_p_gain_ndarray(1))
