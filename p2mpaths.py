@@ -208,6 +208,6 @@ if __name__=='__main__':
     #print('receiver set: ', doa.receiver_set)
     #print(doa.get_data_ndarray())
     #print(path.data[1])
-    print('Departure angeles: ',path.get_departure_angle_ndarray(1)) 'Pass the antenna_number as argument'
+    print('Departure angeles: ',path.get_departure_angle_ndarray(1)) #Pass the antenna_number as argument
     print('Arrival angeles: ',path.get_arrival_angle_ndarray(1))
     print('Gains: ',path.get_p_gain_ndarray(1))
