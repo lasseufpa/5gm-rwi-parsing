@@ -13,6 +13,28 @@ def dft_codebook(dim):
 
 
 def calc_rx_power(departure_angle, arrival_angle, p_gain, antenna_number, frequency=6e10):
+    """This .m file uses a m*m SQUARE UPA, so the antenna number at TX, RX will be antenna_number^2.
+
+    - antenna_number^2 number of element arrays in TX, same in RX
+    - assumes one beam per antenna element
+
+    the first column will be the elevation angle, and the second column is the azimuth angle correspondingly.
+    p_gain will be a matrix size of (L, 1)
+    departure angle/arrival angle will be a matrix as size of (L, 2), where L is the number of paths
+
+    t1 will be a matrix of size (nt, nr), each
+    element of index (i,j) will be the received
+    power with the i-th precoder and the j-th
+    combiner in the departing and arrival codebooks
+    respectively
+
+    :param departure_angle: ((elevation angle, azimuth angle),) (L, 2) where L is the number of paths
+    :param arrival_angle: ((elevation angle, azimuth angle),) (L, 2) where L is the number of paths
+    :param p_gain: path gain (L, 1) where L is the number of paths
+    :param antenna_number: antenna number at TX, RX is antenna_number**2
+    :param frequency: default
+    :return:
+    """
     c = 3e8
     mlambda = c/frequency
     k = 2 * np.pi / mlambda
@@ -65,11 +87,11 @@ if __name__ == '__main__':
         antenna_number = int(np.real(get_float_complex(1)))
         t1 = get_float_complex(16 * 16).reshape((16, 16), order='F')
 
-        antenna_number = 20
-        n_paths = 500
-        departure_angle = np.random.uniform(size=(n_paths, n_paths))
-        arrival_angle = np.random.uniform(size=(n_paths, n_paths))
-        p_gain = np.random.uniform(size=n_paths)
+        #antenna_number = 20
+        #n_paths = 500
+        #departure_angle = np.random.uniform(size=(n_paths, n_paths))
+        #arrival_angle = np.random.uniform(size=(n_paths, n_paths))
+        #p_gain = np.random.uniform(size=n_paths)
 
 
         start = datetime.datetime.today()
