@@ -4,6 +4,13 @@ import datetime
 
 import numpy as np
 
+from rwiparsing import P2mPaths
+
+"""TODO: maybe we could insert in the DNN a snapshot of street situation and ask for the best path for each receiver
+to map this as a reinforced learning we could give a low reward when two users are allocated the same tx element
+and a high reward when a good fairness is achieved
+"""
+
 
 def dft_codebook(dim):
     seq = np.matrix(np.arange(dim))
@@ -68,31 +75,19 @@ def calc_rx_power(departure_angle, arrival_angle, p_gain, antenna_number, freque
 
 if __name__ == '__main__':
 
-    EXAMPLE_DIR=os.path.dirname(os.path.realpath(__file__))
-    MATLAB_DATA=os.path.join(EXAMPLE_DIR, 'test', 'data',
-                             'test_calc_rx_power.bin')
+    RESULTS_DIR='/Users/psb/ownCloud/Projects/DNN Wireless/rwi-3d-modeling/restuls/run00000'
 
-    with open(MATLAB_DATA, 'rb') as infile:
-        L = 15
-        def get_float_complex(L):
-            L2 = np.array(struct.unpack('d' * L * 2, infile.read(L * 2 * 8)), dtype=np.float64)
-            #L2 = L2[0:L * 2] + L2[L * 2:] * 1j
-            L2 = L2.reshape((L, 2), order='F')
-            L2 = L2[:, 0] + L2[:, 1] * 1j
-            return L2
+    BASE_DIR=os.path.dirname(os.path.realpath(__file__))
+    P2MPATHS_FILE=os.path.join(RESULTS_DIR, 'study', 'model.paths.t001_01.r002.p2m')
 
-        departure_angle = get_float_complex(L * 2).reshape((L, 2), order='F')
-        arrival_angle = get_float_complex(L * 2).reshape((L, 2), order='F')
-        p_gain = get_float_complex(L)
-        antenna_number = int(np.real(get_float_complex(1)))
-        t1 = get_float_complex(16 * 16).reshape((16, 16), order='F')
+    with open(P2MPATHS_FILE, 'rb') as infile:
 
-        #antenna_number = 20
-        #n_paths = 500
-        #departure_angle = np.random.uniform(size=(n_paths, n_paths))
-        #arrival_angle = np.random.uniform(size=(n_paths, n_paths))
-        #p_gain = np.random.uniform(size=n_paths)
-
+        paths = P2mPaths(P2MPATHS_FILE)
+        departure_angle = paths.get_departure_angle_ndarray(1)
+        arrival_angle = paths.get_arrival_angle_ndarray(1)
+        p_gain = paths.get_p_gain_ndarray(1)
+        antenna_number = 4
+        print(arrival_angle.shape)
 
         start = datetime.datetime.today()
         t1_py = calc_rx_power(departure_angle, arrival_angle, p_gain, antenna_number)
@@ -100,3 +95,4 @@ if __name__ == '__main__':
 
         #print(np.mean(np.power(t1 - t1_py, 2)))
         print(stop - start)
+        print(t1_py)
