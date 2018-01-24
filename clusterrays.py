@@ -1,4 +1,5 @@
-import p2mdoa
+from rwiparsing import p2mdoa
+
 
 class ClusterRays():
     # Cluster rays into beams

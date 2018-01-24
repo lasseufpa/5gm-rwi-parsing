@@ -1,10 +1,9 @@
-import re
-import os
 import collections
 
 import numpy as np
 
-from p2mdoa import P2mFileParser
+from .p2mdoa import P2mFileParser
+
 
 class P2mPaths(P2mFileParser):
     """Parse a p2m paths file"""
@@ -23,7 +22,7 @@ class P2mPaths(P2mFileParser):
         self.data[receiver]['spread_delay'] = spread_delay
         self.data[receiver]['paths_number'] = n_paths
         """Read: srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2"""
-        for rays in xrange(0,25):
+        for rays in range(0,25):
             line = self._get_next_line()
             ray_n, n_interactions, srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2 = [float(i) for i in line.split()]
             interactions_list = self._get_next_line().strip()
@@ -51,7 +50,7 @@ class P2mPaths(P2mFileParser):
         The array is shaped (number_paths, departure_angle1, departure_angle2)
         """
         data_ndarray = np.zeros((self.data[antenna_number]['paths_number'], 2))
-        for paths in xrange(self.data[antenna_number]['paths_number']):
+        for paths in range(self.data[antenna_number]['paths_number']):
             data_ndarray[paths][0]= self.data[antenna_number][paths+1]['departure_angle1']
             data_ndarray[paths][1]= self.data[antenna_number][paths+1]['departure_angle2']
         return data_ndarray
@@ -61,7 +60,7 @@ class P2mPaths(P2mFileParser):
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         """
         data_ndarray = np.zeros((self.data[antenna_number]['paths_number'], 2))
-        for paths in xrange(self.data[antenna_number]['paths_number']):
+        for paths in range(self.data[antenna_number]['paths_number']):
             data_ndarray[paths][0]= self.data[antenna_number][paths+1]['arrival_angle1']
             data_ndarray[paths][1]= self.data[antenna_number][paths+1]['arrival_angle2']
         return data_ndarray
@@ -70,9 +69,9 @@ class P2mPaths(P2mFileParser):
         """Return the gains as a ndarray
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         """
-        data_ndarray = np.zeros((self.data[antenna_number]['paths_number'], 1))
-        for paths in xrange(self.data[antenna_number]['paths_number']):
-            data_ndarray[paths][0]= self.data[antenna_number][paths+1]['srcvdpower']
+        data_ndarray = np.zeros((self.data[antenna_number]['paths_number']))
+        for paths in range(self.data[antenna_number]['paths_number']):
+            data_ndarray[paths] = self.data[antenna_number][paths+1]['srcvdpower']
         return data_ndarray
 
 if __name__=='__main__':

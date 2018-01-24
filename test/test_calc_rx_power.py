@@ -1,6 +1,7 @@
 import os
-import unittest
 import struct
+import unittest
+
 import numpy as np
 
 from calcrxpower import calc_rx_power
