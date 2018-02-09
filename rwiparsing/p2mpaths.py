@@ -12,10 +12,13 @@ class P2mPaths(P2mFileParser):
         """Get receiver and number of paths (pair Tx-Rx)"""
         line = self._get_next_line()
         receiver, n_paths = [int(i) for i in line.split()]
+        self.data[receiver] = collections.OrderedDict()
+        if n_paths == 0:
+            self.data[receiver] = None
+            return
         """Read: received_power -self.data[receiver][0]-, arrival_time -self.data[receiver][1]-,
          spread_delay -self.data[receiver][2]-"""
         line = self._get_next_line()
-        self.data[receiver] = collections.OrderedDict()
         received_power, arrival_time, spread_delay = [float(i) for i in line.split()]
         self.data[receiver]['received_power'] = received_power
         self.data[receiver]['arrival_time'] = arrival_time
@@ -45,10 +48,38 @@ class P2mPaths(P2mFileParser):
                 coordenates = np.array([float(j) for j in sp_line[0:]])
                 self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordenates
 
+    def get_total_received_power(self, antenna_number):
+        if self.data[antenna_number] is None:
+            return None
+        return self.data[antenna_number]['received_power']
+
+    def get_mean_time_of_arrival(self, antenna_number):
+        if self.data[antenna_number] is None:
+            return None
+        return self.data[antenna_number]['arrival_time']
+
+    def get_arrival_time_ndarray(self, antenna_number):
+        if self.data[antenna_number] is None:
+            return None
+        data_ndarray = np.zeros((self.data[antenna_number]['paths_number'],))
+        for paths in range(self.data[antenna_number]['paths_number']):
+            data_ndarray[paths] = self.data[antenna_number][paths+1]['arrival_time']
+        return data_ndarray
+
+    def get_interactions_list(self, antenna_number):
+        if self.data[antenna_number] is None:
+            return None
+        data = []
+        for paths in range(self.data[antenna_number]['paths_number']):
+            data.append(self.data[antenna_number][paths+1]['interactions_list'])
+        return data
+
     def get_departure_angle_ndarray(self, antenna_number):
         """ return the daparture angles as a ndarray        
         The array is shaped (number_paths, departure_angle1, departure_angle2)
         """
+        if self.data[antenna_number] is None:
+            return None
         data_ndarray = np.zeros((self.data[antenna_number]['paths_number'], 2))
         for paths in range(self.data[antenna_number]['paths_number']):
             data_ndarray[paths][0]= self.data[antenna_number][paths+1]['departure_angle1']
@@ -59,6 +90,8 @@ class P2mPaths(P2mFileParser):
         """Return the arrival angles as a ndarray
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         """
+        if self.data[antenna_number] is None:
+            return None
         data_ndarray = np.zeros((self.data[antenna_number]['paths_number'], 2))
         for paths in range(self.data[antenna_number]['paths_number']):
             data_ndarray[paths][0]= self.data[antenna_number][paths+1]['arrival_angle1']
@@ -69,6 +102,8 @@ class P2mPaths(P2mFileParser):
         """Return the gains as a ndarray
         The array is shaped (number_paths, arrival_angle1, arrival_angle2)
         """
+        if self.data[antenna_number] is None:
+            return None
         data_ndarray = np.zeros((self.data[antenna_number]['paths_number']))
         for paths in range(self.data[antenna_number]['paths_number']):
             data_ndarray[paths] = self.data[antenna_number][paths+1]['srcvdpower']
