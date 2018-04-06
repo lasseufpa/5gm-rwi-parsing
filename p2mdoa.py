@@ -109,3 +109,5 @@ if __name__=='__main__':
     print('transmitter: ', doa.transmitter)
     print('receiver set: ', doa.receiver_set)
     print(doa.get_data_ndarray())
+    data_ndarray = doa.get_data_ndarray()
+    print(data_ndarray[0][0][0:3])
