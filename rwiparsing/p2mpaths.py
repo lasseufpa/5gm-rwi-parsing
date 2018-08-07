@@ -25,7 +25,7 @@ class P2mPaths(P2mFileParser):
         self.data[receiver]['spread_delay'] = spread_delay
         self.data[receiver]['paths_number'] = n_paths
         """Read: srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2"""
-        for rays in range(0,25):
+        for rays in range(0,n_paths):
             line = self._get_next_line()
             ray_n, n_interactions, srcvdpower, arrival_time, arrival_angle1, arrival_angle2, departure_angle1, departure_angle2 = [float(i) for i in line.split()]
             interactions_list = self._get_next_line().strip()
@@ -110,7 +110,8 @@ class P2mPaths(P2mFileParser):
         return data_ndarray
 
 if __name__=='__main__':
-    path = P2mPaths('example/iter0.paths.t001_05.r006.p2m')
+    path = P2mPaths('/mnt/d/github/5gm-rwi-simulation/example/results_new_simuls/run00001/study/model.paths.t001_01.r002.p2m')
+    #path = P2mPaths('example/iter0.paths.t001_05.r006.p2m')
     print('Departure angeles: ',path.get_departure_angle_ndarray(1)) #Pass the antenna_number as argument
     print('Arrival angeles: ',path.get_arrival_angle_ndarray(1))
     print('Gains: ',path.get_p_gain_ndarray(1))
