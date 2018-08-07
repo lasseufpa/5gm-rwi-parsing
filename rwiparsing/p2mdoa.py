@@ -10,12 +10,12 @@ class ParsingError(Exception):
 
 
 class P2mFileParser:
-    """Parser for p2m files"""
+    """Parser for p2m files. It currently support doa, paths and cir. Notice the regular expression in the code."""
 
     # project.type.tx_y.rz.p2m
     _filename_match_re = (r'^(?P<project>.*)' +
                           r'\.' +
-                          r'(?P<type>((doa)|(paths)))' +
+                          r'(?P<type>((doa)|(paths)|(cir)))' +
                           r'\.' +
                           r't(?P<transmitter>\d+)'+
                           r'_' +
@@ -36,6 +36,7 @@ class P2mFileParser:
     def _parse_meta(self):
         match = re.match(P2mFileParser._filename_match_re,
                          os.path.basename(self.filename))
+
         self.project = match.group('project')
         self.transmitter_set = int(match.group('transmitter_set'))
         self.transmitter = int(match.group('transmitter'))
