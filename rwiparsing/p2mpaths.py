@@ -110,8 +110,9 @@ class P2mPaths(P2mFileParser):
         return data_ndarray
 
 if __name__=='__main__':
-    path = P2mPaths('/mnt/d/github/5gm-rwi-simulation/example/results_new_simuls/run00001/study/model.paths.t001_01.r002.p2m')
+    path = P2mPaths('D:/insitedata/results_long_episodes/run00000/study/model.paths.t001_01.r002.p2m')
     #path = P2mPaths('example/iter0.paths.t001_05.r006.p2m')
-    print('Departure angeles: ',path.get_departure_angle_ndarray(1)) #Pass the antenna_number as argument
-    print('Arrival angeles: ',path.get_arrival_angle_ndarray(1))
+    print('Departure angles: ',path.get_departure_angle_ndarray(1)) #Pass the antenna_number as argument
+    print('Arrival angles: ',path.get_arrival_angle_ndarray(1))
     print('Gains: ',path.get_p_gain_ndarray(1))
+    print('Interactions: ',path.get_interactions_list(1))
