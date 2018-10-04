@@ -2,7 +2,8 @@ import collections
 
 import numpy as np
 
-from .p2mdoa import P2mFileParser
+from .p2mdoa import P2mFileParser  #use this option to run from command line
+#from p2mdoa import P2mFileParser  #use this option to run from within IntelliJ IDE and debug
 
 
 class P2mPaths(P2mFileParser):
@@ -40,13 +41,15 @@ class P2mPaths(P2mFileParser):
             self.data[receiver][ray_n]['departure_angle2'] = departure_angle2
             self.data[receiver][ray_n]['interactions_list'] = interactions_list
             self.data[receiver][ray_n]['interactions'] = collections.OrderedDict()
-            """Get coordenates of interactions"""
-            for i in range(n_interactions+2):
+            self.data[receiver][ray_n]['n_interactions'] = n_interactions #store integer
+            """Get coordinates of interactions"""
+            for i in range(n_interactions+2): #add 2 to take in account Tx and Rx
                 line = self._get_next_line()
                 sp_line = line.split()
                 interaction = i 
-                coordenates = np.array([float(j) for j in sp_line[0:]])
-                self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordenates
+                coordinates = np.array([float(j) for j in sp_line[0:]])
+                #self.data[receiver][ray_n]['interactions'][interactions_list.split('-')[i]] = coordinates
+                self.data[receiver][ray_n]['interactions'][str(interaction)] = coordinates
 
     def get_total_received_power(self, antenna_number):
         if self.data[antenna_number] is None:
@@ -73,6 +76,26 @@ class P2mPaths(P2mFileParser):
         for paths in range(self.data[antenna_number]['paths_number']):
             data.append(self.data[antenna_number][paths+1]['interactions_list'])
         return data
+
+    def get_interactions_positions(self, antenna_number, ray_number):
+        if self.data[antenna_number] is None:
+            return None
+        if self.data[antenna_number][ray_number] is None:
+            return None
+        data = []
+        #self.data[receiver][ray_n]['interactions'][interaction]
+        for paths in range(2 + self.data[antenna_number][ray_number]['n_interactions']):
+            data.append(self.data[antenna_number][ray_number]['interactions'][str(paths)])
+        return data
+
+    def get_interactions_positions_as_string(self, antenna_number, ray_number):
+        data = self.get_interactions_positions(antenna_number, ray_number)
+        outputString = ''
+        for i in range(len(data)-1):
+            outputString = outputString + str(data[i][0]) + ' ' + str(data[i][1]) + ' ' + str(data[i][2]) + ','
+        i = len(data)-1
+        outputString += str(data[i][0]) + ' ' + str(data[i][1]) + ' ' + str(data[i][2])
+        return outputString
 
     def get_departure_angle_ndarray(self, antenna_number):
         """ return the daparture angles as a ndarray        
@@ -109,6 +132,46 @@ class P2mPaths(P2mFileParser):
             data_ndarray[paths] = self.data[antenna_number][paths+1]['srcvdpower']
         return data_ndarray
 
+    def is_los(self, antenna_number):
+        '''Check if each ray  (not the whole channel) is LOS or not'''
+        if self.data[antenna_number] is None:
+            return None
+        num_paths = self.data[antenna_number]['paths_number']
+        data_ndarray = np.zeros((num_paths,))
+        for path_i in range(num_paths):
+            interaction = self.data[antenna_number][path_i+1]['interactions_list']
+            if interaction == 'Tx-Rx':
+                data_ndarray[path_i] = 1 #it is LOS
+            else:
+                data_ndarray[path_i] = 0 #it is not LOS
+        return data_ndarray
+
+    def get_6_parameters_for_all_rays(self, antenna_number):
+        """Return all 6 parameters for all rays of a channel as ndarray
+        The array is shaped (number_paths, 6)
+        The order is:
+                            thisRayInfo[0] = ray.path_gain
+                            thisRayInfo[1] = ray.time_of_arrival
+                            thisRayInfo[2] = ray.departure_elevation
+                            thisRayInfo[3] = ray.departure_azimuth
+                            thisRayInfo[4] = ray.arrival_elevation
+                            thisRayInfo[5] = ray.arrival_azimuth
+
+        Later we may add:
+                            thisRayInfo[6] = ray.is_los
+                            if numParametersPerRay == 8:
+                                thisRayInfo[7] = ray.phaseInDegrees
+        """
+        if self.data[antenna_number] is None:
+            return None
+        num_paths = self.data[antenna_number]['paths_number']
+        data_ndarray = np.zeros((num_paths,6))
+        data_ndarray[:,0]=self.get_p_gain_ndarray(antenna_number)
+        data_ndarray[:,1]=self.get_arrival_time_ndarray(antenna_number)
+        data_ndarray[:,2:4] = self.get_departure_angle_ndarray(antenna_number)
+        data_ndarray[:,4:6] = self.get_arrival_angle_ndarray(antenna_number)
+        return data_ndarray
+
 if __name__=='__main__':
     path = P2mPaths('D:/insitedata/results_long_episodes/run00000/study/model.paths.t001_01.r002.p2m')
     #path = P2mPaths('example/iter0.paths.t001_05.r006.p2m')
@@ -116,3 +179,5 @@ if __name__=='__main__':
     print('Arrival angles: ',path.get_arrival_angle_ndarray(1))
     print('Gains: ',path.get_p_gain_ndarray(1))
     print('Interactions: ',path.get_interactions_list(1))
+    print('Interactions positions: ',path.get_interactions_positions(1, 3)) #receiver 2, ray 3
+    print('Interactions positions as string: ',path.get_interactions_positions_as_string(1, 3)) #receiver 2, ray 3
